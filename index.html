@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenzFashion</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Header -->
+   <header>
+  <div class="header-left">
+    <h1>🛒 My Shop</h1>
+  </div>
+  <div class="header-center">
+    <a href="{{ url_for('home') }}" class="nav-btn">Home</a>
+    <a href="#" class="nav-btn">Products</a>
+    <a href="#" class="nav-btn">Brands</a>
+    <a href="#" class="nav-btn">Contact</a>
+    <a href="{{ url_for('wishlist') }}" class="nav-btn">❤️ Wishlist ({{ wishlist_count }})</a>
+    <a href="{{ url_for('cart') }}" class="nav-btn">🛒 Cart ({{ cart_count }})</a>
+  </div>
+  <form class="header-search" action="{{ url_for('search') }}" method="GET">
+    <input type="text" name="q" placeholder="Search products..." required>
+    <button type="submit">Search</button>
+  </form>
+</header>
+<header>
+  <h1>🛒 My Shop</h1>
+  <nav>
+    <a href="{{ url_for('wishlist') }}" class="nav-btn">❤️ Wishlist (<span id="wishlist-count">{{ wishlist_count }}</span>)</a>
+    <a href="{{ url_for('cart') }}" class="nav-btn">🛒 Cart (<span id="cart-count">{{ cart_count }}</span>)</a>
+  </nav>
+</header>
+
+
+  <header class="header">
+    <div class="header-left">
+      <img src="{{ url_for('static', filename='images/suit.png') }}" 
+           alt="GenzFashion Logo" class="logo">
+    </div>
+<div class="card">
+  <img src="{{ product.image }}" alt="{{ product.name }}">
+  <h3>{{ product.name }}</h3>
+  <p>₹{{ product.price }}</p>
+
+  <!-- Add to Cart -->
+  <button class="add-cart" data-id="{{ product.id }}">🛒 Add to Cart</button>
+
+  <!-- Add to Wishlist -->
+  <button class="add-wishlist" data-id="{{ product.id }}">❤️ Add to Wishlist</button>
+</div>
+
+    <!-- Search box -->
+<form class="header-search" action="{{ url_for('search') }}" method="GET">      <input type="text" name="q" placeholder="Search products..." id="searchInput">
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+
+    <!-- Navigation -->
+    <nav class="header-center">
+      <a href="{{ url_for('mens_jeans') }}" class="nav-btn">Mens Jeans</a>
+      <a href="{{ url_for('womens_wear') }}" class="nav-btn">Womens Wear</a>
+
+      <div class="dropdown">
+        <button class="dropdown-toggle">Login / Signup ▾</button>
+        <div class="dropdown-content">
+          <a href="{{ url_for('login') }}">Login</a>
+          <a href="{{ url_for('signup') }}">Signup</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropdown-toggle">More ▾</button>
+        <div class="dropdown-content">
+          <a href="{{ url_for('about') }}">About Us</a>
+          <a href="{{ url_for('contact') }}">Contact</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Slider -->
+  <section class="slider">
+    <div class="slides">
+      <img src="{{ url_for('static', filename='images/slide1.jpg') }}" alt="Slide 1">
+      <img src="{{ url_for('static', filename='images/slide2.jpg') }}" alt="Slide 2">
+      <img src="{{ url_for('static', filename='images/slide3.jpg') }}" alt="Slide 3">
+    </div>
+    <div class="slider-controls">
+      <span class="prev">❮</span>
+      <span class="next">❯</span>
+    </div>
+  </section>
+
+  <!-- Trending Products -->
+  <section class="products">
+    <h2>🔥 Trending Now</h2>
+    <div class="products-container" id="trending-products">
+      <p>Loading trending products...</p>
+    </div>
+  </section>
+
+  <!-- Hot Deals -->
+  <section class="products">
+    <h2>💥 Hot Deals</h2>
+    <div class="products-container" id="hot-deals">
+      <p>Loading hot deals...</p>
+    </div>
+  </section>
+
+  <!-- Brands & Offers -->
+  <section class="brands">
+    <h2>🏷️ Top Brands</h2>
+    <div class="brands-container" id="top-brands">
+      <p>Loading top brands...</p>
+    </div>
+  </section>
+
+  <section class="offers">
+    <h2>🎁 Special Offers</h2>
+    <div class="offers-container" id="offers-container">
+      <p>Loading special offers...</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 GenzFashion. All rights reserved.</p>
+    <div class="social-icons">
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script>
+  // Function to refresh header counts
+  async function updateCounts() {
+    const res = await fetch("/get_counts");
+    const data = await res.json();
+    document.getElementById("cart-count").innerText = data.cart_count;
+    document.getElementById("wishlist-count").innerText = data.wishlist_count;
+  }
+
+  // Add to Cart
+  document.querySelectorAll(".add-cart").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-id");
+      await fetch(`/add_to_cart/${id}`);
+      updateCounts(); // refresh counts instantly
+    });
+  });
+
+  // Add to Wishlist
+  document.querySelectorAll(".add-wishlist").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-id");
+      await fetch(`/add_to_wishlist/${id}`);
+      updateCounts(); // refresh counts instantly
+    });
+  });
+</script>
+
+</body>
+{% extends 'template.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <h1>Welcome to Genz Fashion</h1>
+    <p>Discover the latest trends in clothing, footwear, and accessories.</p>
+    <a href="/footwear" class="cta-button">Shop Now</a>
+</section>
+
+<section class="product-grid">
+    <h2>Featured Products</h2>
+    <div class="product-item">
+        <img src="{{ url_for('static', filename='images/product1.jpg') }}" alt="Product Image">
+        <h3>Stylish Jacket</h3>
+        <p>$75.00</p>
+    </div>
+    <div class="product-item">
+        <img src="{{ url_for('static', filename='images/product2.jpg') }}" alt="Product Image">
+        <h3>Cool Sneakers</h3>
+        <p>$99.00</p>
+    </div>
+</section>
+{% endblock %}
+</html>

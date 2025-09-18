@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mens Jeans</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>Mens Jeans</h1>
+    <a href="{{ url_for('home') }}">Back to Home</a>
+</header>
+
+<main>
+    <div class="products-container">
+        {% for product in products %}
+        <div class="product-card">
+            <img src="{{ product.image }}" alt="{{ product.name }}">
+            <h3>{{ product.name }}</h3>
+            <p>₹{{ product.price }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+</body>
+</html>
